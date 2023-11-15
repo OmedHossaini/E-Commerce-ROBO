@@ -1,4 +1,4 @@
-{
+{ 
     "name": "journeyedu-wksp-template",
     "version": "0.5.0",
     "description": "Basic environment used to build the workshops for the Node.Js Module",
@@ -17,5 +17,5 @@
         "opencage-api-client": "^0.5.1",
         "request": "^2.88.2",
         "request-promise": "^4.2.5"
-    }
+    } 
 }
