@@ -1,5 +1,18 @@
 'use strict';
 
-// build your server here
+const express = require('express');
+const app = express();
+const port = 3000;
 
-// consider making one or more handler files to ease the  division of work
+// Middleware to parse JSON bodies
+app.use(express.json());
+
+// Define a route
+app.get('/', (req, res) => {
+  res.send('Hello World!');
+});
+
+// Start the server
+app.listen(port, () => {
+  console.log(`Server is running on http://localhost:${port}`);
+});
