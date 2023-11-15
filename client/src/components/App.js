@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import Home from './components/Home';
-import Cart from './components/Cart';
-import ItemDetail from './components/ItemDetail';
-import Navbar from './components/Navbar';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Home from './Home';
+import Cart from './Cart'; 
+import Navbar from './Navbar';
+import ItemDetail from './ItemDetail';
 
 const App = () => {
   const [cart, setCart] = useState([]);
