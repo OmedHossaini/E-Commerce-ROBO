@@ -1,16 +1,14 @@
 const { MongoClient } = require("mongodb");
 require("dotenv").config();
-const fs = require('fs');
+
 
 const { MONGO_URI } = process.env;
 const options = {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 };
-
-// Read JSON files
-const itemsData = JSON.parse(fs.readFileSync('./data/items.json', 'utf8'));
-const companiesData = JSON.parse(fs.readFileSync('./data/companies.json', 'utf8'));
+const itemsData = require("./data/items.json")
+const companiesData = require("./data/companies.json")
 
 const batchImport = async () => {
     const client = new MongoClient(MONGO_URI, options);
