@@ -1,28 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const { MongoClient } = require("mongodb");
-require("dotenv").config();
+const getItemsWithCompanyInfo = require('./handler.js/itemsHandler')
 
-const { MONGO_URI } = process.env;
-const options = {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-};
 
-// Route to get items from 'Data_Items' collection
-router.get('/items', async (req, res) => {
-    const client = new MongoClient(MONGO_URI, options);
-
-    try {
-        await client.connect();
-        const db = client.db("E-Commerce");
-        const items = await db.collection("Data_Items").find().toArray();
-        res.status(200).json(items);
-    } catch (err) {
-        res.status(500).json({ message: err.message });
-    } finally {
-        await client.close();
-    }
-});
+// Route to get items with company information from 'Data_Items' and 'Data_Companies' collections
+router.get('/items', getItemsWithCompanyInfo);
 
 module.exports = router;
