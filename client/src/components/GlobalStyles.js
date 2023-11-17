@@ -5,14 +5,7 @@ export default createGlobalStyle`
   html, body {
     max-width: 100vw;
   }
-
-  /* font add example
-  @font-face {
-  font-family: 'zero4B';
-  src: url(${zero4Burl}) format('truetype');
-  /* other formats include: 'woff2', 'truetype, 'opentype',
-                            'embedded-opentype', and 'svg' 
-}*/
+ 
  
 
 
