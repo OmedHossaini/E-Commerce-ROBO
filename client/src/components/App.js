@@ -6,6 +6,9 @@ import Cart from './Cart';
 import Navbar from './Navbar';
 import ItemDetail from './ItemDetail';
 import { MainContext } from './MainContext';
+import AboutUs from './AboutUsContent/AboutUs';
+import ContactUs from './ContactUs';
+
 
 const App = () => {
 
@@ -65,7 +68,9 @@ const App = () => {
         <Routes>
           {"temp text"}
           <Route path="/" element={<Home addToCart={addToCart} />} />
+          <Route path="/about" element={<AboutUs />} />
           <Route path="/cart" element={<Cart cart={cart} removeFromCart={removeFromCart} />} />
+          <Route path="/contactus" element={<ContactUs />} />
           <Route path="/item/:id" element={<span>AddToCart</span>} />
         </Routes>
       </Router>
