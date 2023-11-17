@@ -13,14 +13,13 @@ import ContactUs from './ContactUs';
 const App = () => {
 
   const {
-    actions: { receiveItemInfoFromServer },
+    actions: { receiveItemInfoFromServer, getItemsByCategory },
     state: { items, itemsIndex },
      } = useContext(MainContext);
 
   const [cart, setCart] = useState([]);
 
-  useEffect(() => {
-    console.log("quite fetching");
+  useEffect(() => { 
     fetch('/items',
       {
        method: "GET",
@@ -65,6 +64,7 @@ const App = () => {
     <GlobalStyles/>
       <Router>
         <Navbar cartSize={cart.length} />
+        <button onClick={()=>{getItemsByCategory("Fitness")}}>CATEGORY TEST</button>
         <Routes>
           {"temp text"}
           <Route path="/" element={<Home addToCart={addToCart} />} />
