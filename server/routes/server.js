@@ -4,5 +4,5 @@ const itemsRouter = require('./routes'); // Adjust the path to use the modified 
 
 app.use('/', itemsRouter); // Using the items router under the '/api' path
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 6000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

@@ -1,6 +1,35 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import { MainContext } from './MainContext';
+
 
 const Home = ({ addToCart }) => {
+
+    const {
+        actions: { receiveItemInfoFromServer },
+        state: { items, itemsIndex },
+         } = useContext(MainContext);
+          
+         
+    return (
+        <>
+        <div>
+            {items != [] &&(
+                
+            items.map((item)=>{
+                const _itemName = item.name;
+                return(
+                    <div key ={item._id}>
+                        <img src={item.imageSrc} />
+                        <p>{_itemName}</p>
+                    </div>
+                )
+            })
+            )
+        }
+        </div>
+        </>
+    )
+/*
 const [items, setItems] = useState([]);
 
 useEffect(() => {
@@ -23,6 +52,7 @@ return (
     </ul>
     </div>
 );
+*/
 };
 
 export default Home;
