@@ -5,8 +5,6 @@ export default createGlobalStyle`
   html, body {
     max-width: 100vw;
   }
- 
- 
 
 
   /* http://meyerweb.com/eric/tools/css/reset/
@@ -47,7 +45,7 @@ export default createGlobalStyle`
   }
 
   body {  
-    background: #202020;
+    background: #f0f0f0;
   }
 
 `;
