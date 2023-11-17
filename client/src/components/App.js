@@ -1,15 +1,38 @@
-import React, { useState, useEffect } from 'react';
+import GlobalStyles from './GlobalStyles';
+import React, { useState, useEffect, useContext } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Home from './Home';
 import Cart from './Cart'; 
 import Navbar from './Navbar';
 import ItemDetail from './ItemDetail';
+import { MainContext } from './MainContext';
 
 const App = () => {
+
+  const {
+    actions: { receiveItemInfoFromServer },
+    state: { items, itemsIndex },
+     } = useContext(MainContext);
+
   const [cart, setCart] = useState([]);
 
   useEffect(() => {
+    console.log("quite fetching");
+    fetch('/items',
+      {
+       method: "GET",
+       header: {
+          "Content-Type":"application/json",
+        } 
+      }
+    )
+    .then(res => res.json())
+    .then(data => receiveItemInfoFromServer(data)) 
+    .catch((error)=>{
+      console.log(error); 
+    })
   }, []);
+
 
   const addToCart = (item) => {
     
@@ -35,14 +58,18 @@ const App = () => {
   };
 
   return (
-    <Router>
-      <Navbar cartSize={cart.length} />
-      <Routes>
-        <Route path="/" element={<Home addToCart={addToCart} />} />
-        <Route path="/cart" element={<Cart cart={cart} removeFromCart={removeFromCart} />} />
-        <Route path="/item/:id" element={<ItemDetail addToCart={addToCart} />} />
-      </Routes>
-    </Router>
+    <>
+    <GlobalStyles/>
+      <Router>
+        <Navbar cartSize={cart.length} />
+        <Routes>
+          {"temp text"}
+          <Route path="/" element={<Home addToCart={addToCart} />} />
+          <Route path="/cart" element={<Cart cart={cart} removeFromCart={removeFromCart} />} />
+          <Route path="/item/:id" element={<span>AddToCart</span>} />
+        </Routes>
+      </Router>
+    </>
   );
 };
 
