@@ -1,20 +1,20 @@
-const { MongoClient } = require("mongodb");
-require("dotenv").config();
+const { MongoClient } = require("mongodb"); // Import MongoClient from the MongoDB driver.
+require("dotenv").config(); // Load environment variables from a .env file.
 
-const { MONGO_URI } = process.env;
-const options = {
+const { MONGO_URI } = process.env; // Extract the MONGO_URI environment variable.
+const options = { // Define options for the MongoDB client.
     useNewUrlParser: true,
     useUnifiedTopology: true,
 };
 
-const purchaseItemHandler = async (req, res) => {
-    const client = new MongoClient(MONGO_URI, options);
-    const itemId = req.body.itemId;
-    const quantity = req.body.quantity;  // Number of items the user wants to purchase
-    const clientInfo = req.body.clientInfo;
+const purchaseItem = async (req, res) => { // Define an async function to handle item purchase requests.
+    const client = new MongoClient(MONGO_URI, options); // Create a new MongoDB client instance.
+    const itemId = req.body.itemId; // Extract the item ID from the request body.
+    const quantity = req.body.quantity;  // Number of items the user wants to purchase // Extract the quantity of items to purchase.
+    const clientInfo = req.body.clientInfo; // Extract client information from the request.
 
     try {
-        await client.connect();
+        await client.connect(); // Connect to the MongoDB database.
         const db = client.db("E-Commerce");
 
         // Insert client information into the "Data_Clients" collection
@@ -47,4 +47,4 @@ const purchaseItemHandler = async (req, res) => {
     }
 };
 
-module.exports = purchaseItemHandler;
+module.exports = purchaseItem;
