@@ -7,7 +7,7 @@ const purchaseItem = require('./handlers/purchaseItem');
 const cartItems = require('./handlers/cartItems'); 
 const itemsByPage = require("./handlers/itemsByPage");
 const companyInfo = require("./handlers/companyInfo")
-
+const getItemById = require('./handlers/itemById')
 
 router.use(express.json());
 
@@ -16,6 +16,9 @@ router.get('/items', itemsInfo);
 
 // Route to get 20 items by page with company information from 'Data_Items' and 'Data_Companies' collections 
 router.get('/items/:page', itemsByPage);
+
+// Route for getting an item and its associated company information
+router.get('/item/:_id', getItemById);
 
 // New GET route to retrieve items in the cart
 router.get('/cart', cartItems); 
