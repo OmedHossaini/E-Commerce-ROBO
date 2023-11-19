@@ -7,7 +7,9 @@ const initialState = {
     companies: [],
     cart: [],
     categories: [],
-    itemsByCategory: [],
+    itemsCurrentPage: [],
+    cartChanged: false,
+    cartReceived: false,
   };
  
 const reducer = (state, action) => { 
@@ -46,16 +48,51 @@ const reducer = (state, action) => {
         } 
         
     }
+ 
+    case 'receive-page-info-from-server': {
+
+      const _tempItemsArray= []; 
+      for (let _i = 0; _i < Object.keys(action.data).length; _i +=1)
+      { 
+         const _item = action.data[String(_i)]; 
+        _tempItemsArray[_i] = {..._item};
+      }
+      return {
+        ...state, 
+        itemsCurrentPage: _tempItemsArray,
+      } 
+    }
 
     case 'receive-cart-info-from-server': {
-      
-      return {
-        ...state,
+      const _tempItemsArray= []; 
+      for (let _i = 0; _i < Object.keys(action.data).length; _i +=1)
+      { 
+         const _item = action.data[String(_i)]; 
+        _tempItemsArray[_i] = {..._item};
       }
+      
+      console.log("cart items",_tempItemsArray);
+      return {
+        ...state, 
+        cartReceived: true,
+        cart: _tempItemsArray,
+      } 
+ 
+    }
+
+    case 'add-to-cart': { 
+      const _tempCart = state.cart.slice();
+      _tempCart.push(action.data.item);
+      return {
+        ...state,  
+        cart: _tempCart,
+      } 
+
     }
 
     //data required: category string
     //sets itemsByCategory to 
+
     case 'get-items-by-category': {
         const _cat = action.data;
         const _tempItemCatArray = [];
@@ -86,6 +123,72 @@ const reducer = (state, action) => {
 export const MainProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
+
+    //requestItemPage must be used in use effect, it's the first half that will obtain the item page data
+    //once done it will add it to the itemsCurrentPage state
+    const requestItemPage = (data) => {
+            fetch('/items/'+String(data),
+            {
+            method: "GET",
+            header: {
+                "Content-Type":"application/json",
+              } 
+            }
+          )
+          .then(res => res.json())
+          .then(data => receiveItemPageFromServer(data)) 
+          .catch((error)=>{
+            console.log(error); 
+          }) 
+    }
+    
+    const requestAllItems = () => {
+        fetch('/items',
+        {
+        method: "GET",
+        header: {
+            "Content-Type":"application/json",
+          } 
+        }
+      )
+      .then(res => res.json())
+      .then(data => receiveItemInfoFromServer(data)) 
+      .catch((error)=>{
+        console.log(error);  
+      }) 
+    }
+
+    const requestCart = () => {
+      fetch('/cart',
+      {
+      method: "GET",
+      header: {
+          "Content-Type":"application/json",
+        } 
+      }
+    )
+    .then(res => res.json())
+    .then(data => receiveCartInfoFromServer(data)) 
+    .catch((error)=>{
+      console.log(error);  
+    }) 
+  }
+
+  
+  const receiveCartInfoFromServer = (data) => {
+    dispatch({
+      type: "receive-cart-info-from-server",
+      data: data,
+    }); 
+  }; 
+
+    const receiveItemPageFromServer = (data) => {
+      dispatch({
+        type: "receive-page-info-from-server",
+        data: data,
+      }); 
+    }; 
+
     const receiveItemInfoFromServer = (data) => {
       dispatch({
         type: "receive-item-info-from-server",
@@ -101,11 +204,28 @@ export const MainProvider = ({ children }) => {
 
     }
 
-    const addToCart = (data) => {
-      dispatch({
+    const cartUpdate = (data) => {
+      console.log("hi");
+    }
+
+    const addToCart = (data) => { 
+      fetch('/addToCart',
+        {
+        method: "POST", 
+        body: JSON.stringify({"_id":data}),
+        headers: {
+            "Content-Type":"application/json",
+          },
+        })
+        .then(res => res.json())
+        .then((res) => { 
+          dispatch({
         type: "add-to-cart",
-        data: data,
-      }); 
+        data: res,
+        }) }  )  
+      .catch((error)=>{
+        console.log(error);  
+        })
     }; 
 
     const checkoutPurchase = (data) => {
@@ -127,8 +247,14 @@ export const MainProvider = ({ children }) => {
       value={{
         state,
         actions: { 
-          addToCart,
-          receiveItemInfoFromServer,
+          requestAllItems,
+          requestItemPage, 
+          requestCart,
+          cartUpdate,
+
+
+          addToCart, 
+
           checkoutPurchase,
 
           getItemsByCategory,

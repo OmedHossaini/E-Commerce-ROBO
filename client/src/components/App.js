@@ -11,67 +11,32 @@ import ContactUs from './ContactUs';
 
 
 const App = () => {
-
+ 
   const {
-    actions: { receiveItemInfoFromServer, getItemsByCategory },
-    state: { items, itemsIndex },
+    actions: { requestItemPage,requestCart, addToCart, },
+    state: { cartChanged, cart },
      } = useContext(MainContext);
-
-  const [cart, setCart] = useState([]);
-
-  useEffect(() => { 
-    fetch('/items',
-      {
-       method: "GET",
-       header: {
-          "Content-Type":"application/json",
-        } 
-      }
-    )
-    .then(res => res.json())
-    .then(data => receiveItemInfoFromServer(data)) 
-    .catch((error)=>{
-      console.log(error); 
-    })
+ 
+   
+  ///USE EFFECT TO FETCH ITEMS, SHOULD STAY IN APP
+  const mainEffect = useEffect(() => { 
+    requestItemPage(1);
+    requestCart(); 
   }, []);
-
-
-  const addToCart = (item) => {
-    
-    const existingItem = cart.find((cartItem) => cartItem.id === item.id);
-
-    if (existingItem) {
-    
-      setCart((prevCart) =>
-        prevCart.map((cartItem) =>
-          cartItem.id === item.id
-            ? { ...cartItem, quantity: cartItem.quantity + 1 }
-            : cartItem
-        )
-      );
-    } else {
-      
-      setCart((prevCart) => [...prevCart, { ...item, quantity: 1 }]);
-    }
-  };
-
-  const removeFromCart = (itemId) => {
-    setCart((prevCart) => prevCart.filter((cartItem) => cartItem.id !== itemId));
-  };
+ 
 
   return (
     <>
     <GlobalStyles/>
       <Router>
-        <Navbar cartSize={cart.length} />
-        <button onClick={()=>{getItemsByCategory("Fitness")}}>CATEGORY TEST</button>
+        <Navbar cartSize={cart.length} /> 
+        <button onClick={()=>{addToCart(6547)}}>add item 6547 to cart</button>
         <Routes>
           {"temp text"}
-          <Route path="/" element={<Home addToCart={addToCart} />} />
+          <Route path="/" element={<Home   />} />
           <Route path="/about" element={<AboutUs />} />
-          <Route path="/cart" element={<Cart cart={cart} removeFromCart={removeFromCart} />} />
-          <Route path="/contactus" element={<ContactUs />} />
-          <Route path="/item/:id" element={<span>AddToCart</span>} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/contactus" element={<ContactUs />} /> 
         </Routes>
       </Router>
     </>
