@@ -15,7 +15,7 @@ const itemsByPage = async (req, res) => { // Define an async function for pagina
         const db = client.db("E-Commerce"); // Select the "E-Commerce" database.
 
         // Adding pagination // Comment indicating the start of pagination logic.
-        const page = req.query.page ? parseInt(req.query.page) : 1; // Determine the current page number.
+        const page = req.params.page ? parseInt(req.params.page) : 1; // Determine the current page number.
         const limit = 20; // Set the number of items per page to 20.
         const skip = (page - 1) * limit;
 
