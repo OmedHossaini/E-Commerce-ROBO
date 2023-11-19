@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { MainContext } from './MainContext';
 import styled from 'styled-components';
 
+
 const Home = ({ addToCart }) => {
 
     const {
