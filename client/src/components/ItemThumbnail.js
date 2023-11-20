@@ -137,8 +137,8 @@ background-color: white;
 padding:5px;
 border-radius: 5px;
 width:120px;
-min-height: 220px; 
-max-height:220px;
+min-height: 210px; 
+max-height:200px;
 left:0px;
 bottom:0px;
 box-shadow: rgba(0, 0, 0, 0.07) 0px 1px 2px, rgba(0, 0, 0, 0.07) 0px 2px 4px, rgba(0, 0, 0, 0.07) 0px 4px 8px, rgba(0, 0, 0, 0.07) 0px 8px 16px, rgba(0, 0, 0, 0.07) 0px 16px 32px, rgba(0, 0, 0, 0.07) 0px 32px 64px;
@@ -151,7 +151,7 @@ transition: 100ms ease-in;
     left:-25px;
     bottom:20px;
     width: 160px;
-    min-height: 280px; 
+    min-height: 250px; 
     z-index: 5;
 }
 `
@@ -163,8 +163,8 @@ height:80px;
 border-radius: 5px;
 margin:5px;
 &.bighover{
-    width:120px;
-    height:120px;
+    width:100px;
+    height:100px;
     margin:auto;
 }
 

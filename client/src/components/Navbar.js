@@ -52,24 +52,6 @@ box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 `;
 
-// const SearchField = styled.input`
-// border: 1px solid #ccc;
-// border-radius: 5px;
-// padding: 1vw;
-// font-size: 1.5vw;
-// width: 30vw;
-// height: 5vh;
-// margin-top: 2vh;
-//     &:focus{
-//         outline: none;
-//         border-color: #2e72d2;
-//         box-shadow: 0 0 8px rgba(30, 144, 255, 0.8);
-//     }
-//     &::placeholder {
-//         color: #aaa;
-//     }
-// `;
-
 const NavBarButtons = styled.div`
 display: flex;
 align-items: center;
