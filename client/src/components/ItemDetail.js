@@ -6,13 +6,55 @@ import { MainContext } from './MainContext';
 const ItemDetail = () => {
 const { itemId } = useParams();
 const {
-    state: { items, companies },
-    actions: { addToCart },
+    state: { cart, items, companies },
+    actions: { addToCart,requestCart },
 } = useContext(MainContext);
 
 const [item, setItem] = useState(null);
 const [company, setCompany] = useState(null);
 const [quantity, setQuantity] = useState(1);
+const [inCart,setInCart] = useState(0); 
+
+//Renaud: Fetching specific item info as well as cart info 
+useEffect(()=>{ 
+    requestCart();  
+    fetch('/item/'+String(itemId),
+            {
+            method: "GET",
+            header: {
+                "Content-Type":"application/json",
+              } 
+            }
+          )
+          .then(res => res.json())
+          .then(data => { 
+            setCompany(data.company);
+            setItem(data);}) 
+          .catch((error)=>{
+            console.log(error); 
+          });
+},[])
+
+///Renaud: use effect to track number of this item in the cart
+useEffect(
+    ()=>{
+        let _count = 0;
+        for (let _i =0; _i < cart.length; _i++)
+        { 
+            if (cart[_i]._id === Number(itemId))
+            { 
+                setItem(cart[_i]);
+                setInCart(cart[_i].quantity); 
+                _count = cart[_i].quantity;
+                break;
+            }
+        }
+        if (_count === 0){setInCart(0);} 
+    }
+    ,[cart]);
+
+/* Renaud: commented this out as it seems to do what some of my functions did, Omed if this still still useful
+   feel free to recycle any of it etc otherwise please delete in your next commit
 
 useEffect(() => {
     const selectedItem = items.find((i) => i._id === itemId);
@@ -23,11 +65,7 @@ useEffect(() => {
     setCompany(selectedCompany);
     }
 }, [itemId, items, companies]);
-
-const handleAddToCart = () => {
-    //this is for renaud
-    addToCart(item);
-};
+*/ 
 
 return (
 <>
@@ -70,14 +108,21 @@ return (
                 +
                 </QuantityButton>
             </QuantitySelector>
-            {quantity >= item.numInStock && (
+            {quantity + inCart >= item.numInStock && (
                 <StockMessage>Maximum stock reached!</StockMessage>
             )}
-            <AddToCartButton onClick={handleAddToCart}>
+            {/* Renaud: fixed add to cart functionality here*/}
+            <AddToCartButton onClick={()=>{
+                addToCart({_id:item._id,quantity:inCart+quantity});
+            }}>
                 ADD TO CART
             </AddToCartButton>
+             
             </AddToCartSection>
         )}
+        {/* Renaud: also added in cart thing, Omed please add remove, feel free to inspire from ItemThumbnail and MainContext*/}
+        {/* TODO Either Omed or Brian can also make beautiful, delete my comment once css done*/}
+        {`${inCart} in cart`}
         </ProductDetailsWrapper>
     </ProductWrapper>
     </ProductContainer>
@@ -109,6 +154,7 @@ max-width: 800px;
 margin: 0 auto;
 background-color: #ffffff;
 border-radius: 8px;
+padding:20px;
 box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 `;
 

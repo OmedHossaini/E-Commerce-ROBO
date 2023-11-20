@@ -11,34 +11,31 @@ import ContactUs from './ContactUs';
 
 
 const App = () => {
- 
+
+  //Renaud: app itself doesn't need too much context or state etc as each individual component will be checking server for their info.
+  //this is done in case someone "multiplayer" buys all your watches before you lol
   const {
-    actions: { requestItemPage,requestCart, addToCart, },
-    state: { cartChanged, cart },
+    actions: {  },
+    state: {  cart },
      } = useContext(MainContext);
- 
-   
-  ///USE EFFECT TO FETCH ITEMS, SHOULD STAY IN APP
-  const mainEffect = useEffect(() => { 
-    requestItemPage(1);
-    requestCart(); 
-  }, []);
- 
+
+    
 
   return (
     <>
     <GlobalStyles/>
       <Router>
-        <Navbar cartSize={cart.length} /> 
-        <button onClick={()=>{addToCart(6547)}}>add item 6547 to cart</button>
+        <Navbar cartSize={cart.length} />  
         <Routes>
           {"temp text"}
           <Route path="/" element={<Home   />} />
           <Route path="/about" element={<AboutUs />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/contactus" element={<ContactUs />} /> 
+          <Route path="/item/:itemId" element={<ItemDetail />} /> 
         </Routes>
       </Router>
+      
     </>
   );
 };

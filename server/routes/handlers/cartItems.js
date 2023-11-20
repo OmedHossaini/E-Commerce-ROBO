@@ -22,10 +22,14 @@ const cartItems = async (req, res) => { // Define an async function to retrieve 
         for (const cartItem of cartItems) {
             const dataItem = await db.collection("Data_Items").findOne({ _id: cartItem._id });
             if (dataItem) {
+                //Renaud: just a bit of a quantity check, not really necessary but it made me able to work with
+                //existing DB and set quantity to 1 if it didn't exist.
+                if (!cartItem.quantity){dataItem.quantity = 1}
+                else {dataItem.quantity = cartItem.quantity;} //Renaud: item data doesn't contain cart data, so we take the quantity from the cart data
                 itemsToReturn.push(dataItem);
             }
         }
-
+        console.log("items to return length",itemsToReturn.length);
         res.status(200).json(itemsToReturn);
     } catch (e) {
         res.status(500).json({ error: e.message });
