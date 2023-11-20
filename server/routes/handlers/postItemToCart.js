@@ -22,7 +22,7 @@ const postItemToCart = async (req, res) => { // Define an async function to hand
         if (item) {
             if (!inCart) { //Renaud: checking whether item exists in cart or not
                 await db.collection("Cart").insertOne({ _id: _id, quantity: 1 });  
-                 
+                
                 item.quantity = quantity;
                 res.status(200).json({ message: "Item(s) added to cart", item });
             }

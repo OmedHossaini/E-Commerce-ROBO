@@ -46,4 +46,4 @@ try {
 }
 };
 
-module.exports = { deleteAllItemsFromCart };
+module.exports = deleteAllItemsFromCart 
