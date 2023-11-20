@@ -1,20 +1,30 @@
-import React, { useState, useEffect } from 'react'; // Importing React, useState and useEffect hooks from 'react'
+import React, { useState, useEffect, useRef } from 'react'; // Importing React, useState and useEffect hooks from 'react'
 import styled from 'styled-components'; // Importing styled-components for styling
 import { Link } from 'react-router-dom';
 
 // Styled Components
 const StyledSearchInput = styled.input` // Creating a styled input component
-  width: 100%; // Full width
   padding: 10px; // Padding inside the input
-  margin: 10px 0; // Margin around the input
-  box-sizing: border-box; // Adjusts the box model to include padding and border
   border: 1px solid #ccc; // Border styling
-  border-radius: 4px; // Rounded corners
+  padding: 1vw;
+  font-size: 1.5vw;
+  width: 30vw;
+  height: 3vh;
+  max-width: 400vw;
+  margin-top: 2vh;
+    &:focus{
+      outline: none;
+      border-color: #2e72d2;
+      box-shadow: 0 0 8px rgba(30, 144, 255, 0.8);
+    }
+    &::placeholder {
+      color: #aaa;
+    }
 `;
 
 const StyledResultsContainer = styled.div` // Creating a styled div for results container
   position: absolute; // Absolute positioning
-  width: 100%; // Full width
+  width: 32vw; // Full width
   max-height: 300px; // Maximum height
   overflow-y: auto; // Scrollable vertically
   border: 1px solid #ccc; // Border styling
@@ -47,17 +57,35 @@ const debounce = (func, delay) => { // Declaring a debounce function
 const SearchComponent = () => { // Main search component
   const [searchTerm, setSearchTerm] = useState(''); // State for search term
   const [results, setResults] = useState([]); // State for search results
+  const [isSearchVisible, setIsSearchVisible] = useState(false);
+  const searchRef = useRef(null);
+
 
   // Fetch search results
   const fetchSearchResults = async (query) => { // Function to fetch search results
     try {
       const response = await fetch(`/itemSearch?query=${query}`); // Fetching data from the server
       const data = await response.json(); // Converting response to JSON
-      setResults(data); // Setting the results in state
+      setResults(data);
+      setIsSearchVisible(true) // Setting the results in state
     } catch (error) {
       console.error('Error fetching items:', error); // Error handling
     }
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
+        setIsSearchVisible(false);
+      }
+    };
+    document.addEventListener('click', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, []);
+
 
   // Debounced search function
   const handleSearch = debounce(() => { // Debounced search function
@@ -76,17 +104,18 @@ const SearchComponent = () => { // Main search component
   const clearSearch = () => {
     setSearchTerm('');
     setResults([]);
+    setIsSearchVisible(false);
   };
 
   return (
-    <div>
+    <div ref={searchRef}>
       <StyledSearchInput
         type="text"
         placeholder="Search items..."
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
       />
-      {results.length > 0 && (
+      {isSearchVisible && results.length > 0 && (
         <StyledResultsContainer>
           {results.map((item, index) => (
             <Link 
