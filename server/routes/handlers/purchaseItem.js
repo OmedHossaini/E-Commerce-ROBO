@@ -38,7 +38,7 @@ const purchaseItem = async (req, res) => { // Define an async function to handle
         if (newStock === 0) {
             await db.collection("Data_Items").deleteOne({ _id: itemId });
         }
-
+        await db.collection("Cart").deleteMany()
         res.status(200).json({ message: "Purchase successful" });
     } catch (err) {
         res.status(500).json({ message: err.message });
