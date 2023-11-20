@@ -1,5 +1,6 @@
 import {useContext, React} from 'react';
 import { MainContext } from './MainContext';
+import { Link } from 'react-router-dom';
 
 const Cart = () => {
 
@@ -19,6 +20,9 @@ return (
         </li>
         ))}
     </ul>
+    <Link to="/confirmation">
+        <button>Proceed to Confirmation</button>
+    </Link>
     </div>
 );
 };

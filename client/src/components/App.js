@@ -9,7 +9,7 @@ import { MainContext } from './MainContext';
 import AboutUs from './AboutUsContent/AboutUs';
 import ContactUs from './ContactUs';
 import Items from './Items';
-
+import Confirmation from './Confirmation';
 
 const App = () => {
 
@@ -35,6 +35,7 @@ const App = () => {
           <Route path="/contactus" element={<ContactUs />} /> 
           <Route path="/items/:category/:page" element={<Items/>} />
           <Route path="/item/:itemId" element={<ItemDetail />} /> 
+          <Route path="/confirmation" element={<Confirmation />} />
         </Routes>
       </Router>
       
