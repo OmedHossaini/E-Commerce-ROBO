@@ -395,6 +395,7 @@ export const MainProvider = ({ children }) => {
           requestCart,  
           addToCart, 
           removeFromCart,
+          clearCart,
 
           checkoutPurchase,  //placeholder
         },

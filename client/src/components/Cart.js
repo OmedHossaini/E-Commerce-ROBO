@@ -5,12 +5,15 @@ import styled from 'styled-components';
 
 
 const Cart = () => {
-
     const {
-        actions: { requestCart, addToCart, removeFromCart,  },
+        actions: { requestCart, addToCart, removeFromCart, clearCart },
         state: { cart },
     } = useContext(MainContext);
 
+const handleClearCart = () => {
+    clearCart();
+};
+    
 return (
     <Wrapper>
     <h1>Shopping Cart</h1>
@@ -28,7 +31,7 @@ return (
     <Link to="/confirmation">
         <button className='confirmationButton'>Proceed to Confirmation</button>
     </Link>
-    <button className='ClearCartButton'>Empty Cart</button>
+    <button className='ClearCartButton' onClick={handleClearCart}>Empty Cart</button>
     </EndOfPageButtons>
     </Wrapper>
 );
