@@ -45,13 +45,13 @@ const ItemThumbnail = (props) => {
             
             {/*checking if hovering to make the thumbnail bigger etc*/}
             {!bigHover && (
-                <ThumbTitle>{_item.name.substr(0,27)+"..."}</ThumbTitle>
+                <ThumbTitle style={{minHeight: "54px"}}>{_item.name.substr(0,27)+"..."}</ThumbTitle>
             )}
             {bigHover && (
                 <BigThumbTitle>{_item.name}</BigThumbTitle>
             )}
             {/*important link to the ItemDetails route*/}
-            <Link to={`/item/${_item._id}`}><ThumbImg src={_item.imageSrc} /></Link>
+            <Link to={`/itemsId/${_item._id}`}><ThumbImg {...(bigHover ?{className: "bighover"}:{}) } src={_item.imageSrc}  /></Link>
 
             <ThumbTitle>
                 
@@ -87,27 +87,30 @@ const ItemThumbnail = (props) => {
                 OUT OF STOCK
                 </>
             )
-            } 
-            </ThumbTitle>
+            }  
             {/*if item in cart, add remove button w functionality*/}
             {inCart > 0 && (
-            <ThumbTitle><ThumbLinkDelete onClick={()=>{
+            <ThumbLinkDelete onClick={()=>{
                 removeFromCart(_item._id);
-                }}>REMOVE</ThumbLinkDelete></ThumbTitle>
+                }}><p>REMOVE</p></ThumbLinkDelete>
             )}
+            </ThumbTitle>
         </ThumbDiv>
     )
 
 }
 //cool CSS starts here
 const ThumbTitle = styled.p`
-margin:2px;
-
-font-size: 16px;
-`
-const BigThumbTitle = styled.p`
-    min-height: 40px;
+    flex:1;
+    margin:5px;
     font-size: 16px;
+
+`
+const BigThumbTitle = styled.div` 
+    flex:3;
+    min-height: 60px;
+    font-size: 16px;
+    margin-bottom: 10px;
 `
 const ThumbLink = styled.a` 
     color:rgb(255, 120, 0);
@@ -122,13 +125,19 @@ const ThumbLinkDelete = styled.a`
     cursor:pointer;
     &:hover{text-decoration: underline;}
 `
-const ThumbDiv = styled.div`
+const ThumbDiv = styled.div` 
+resize: none;
 position: relative;
+display: flex;
+flex-direction:column;
+text-align: center;
+gap:5px; 
 background-color: white;
-padding:8px;
+padding:5px;
 border-radius: 5px;
 width:120px;
-max-height:180px;
+min-height: 220px; 
+max-height:220px;
 left:0px;
 bottom:0px;
 box-shadow: rgba(0, 0, 0, 0.07) 0px 1px 2px, rgba(0, 0, 0, 0.07) 0px 2px 4px, rgba(0, 0, 0, 0.07) 0px 4px 8px, rgba(0, 0, 0, 0.07) 0px 8px 16px, rgba(0, 0, 0, 0.07) 0px 16px 32px, rgba(0, 0, 0, 0.07) 0px 32px 64px;
@@ -139,18 +148,24 @@ transition: 100ms ease-in;
     font-weight: 600;
     box-shadow: rgba(255, 120, 0, 0.07) 0px 1px 2px, rgba(255, 120, 0, 0.07) 0px 2px 4px, rgba(255, 120, 0, 0.07) 0px 4px 8px, rgba(255, 120, 0, 0.07) 0px 8px 16px, rgba(255, 120, 0, 0.07) 0px 16px 32px, rgba(255, 120, 0, 0.07) 0px 32px 64px;
     left:-25px;
-    bottom:10px;
+    bottom:20px;
     width: 160px;
-    height: 100%;
-    max-height:100%;
+    min-height: 280px; 
     z-index: 5;
 }
 `
 
 const ThumbImg = styled.img`
+flex:2;
 width:80px;
 height:80px;
 border-radius: 5px;
+margin:5px;
+&.bighover{
+    width:120px;
+    height:120px;
+    margin:auto;
+}
 
 `
 

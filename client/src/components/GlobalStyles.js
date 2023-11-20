@@ -29,6 +29,9 @@ export default createGlobalStyle`
     padding: 0;
     border: 0;
     vertical-align: baseline;
+    text-decoration: none;
+    color:inherit;
+
   }
   /* HTML5 display-role reset for older browsers */
   article, aside, details, figcaption, figure,

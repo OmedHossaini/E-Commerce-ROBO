@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { MainContext } from './MainContext';
 
 const ItemDetail = () => {
-const { itemId } = useParams();
+const { _id } = useParams();
 const {
     state: { cart, items, companies },
     actions: { addToCart,requestCart },
@@ -18,16 +18,17 @@ const [inCart,setInCart] = useState(0);
 //Renaud: Fetching specific item info as well as cart info 
 useEffect(()=>{ 
     requestCart();  
-    fetch('/item/'+String(itemId),
+    fetch('/itemsId/'+String(_id),
             {
             method: "GET",
-            header: {
+            headers: {
                 "Content-Type":"application/json",
               } 
             }
           )
           .then(res => res.json())
           .then(data => { 
+            console.log("THE DATA",data)
             setCompany(data.company);
             setItem(data);}) 
           .catch((error)=>{
@@ -41,7 +42,7 @@ useEffect(
         let _count = 0;
         for (let _i =0; _i < cart.length; _i++)
         { 
-            if (cart[_i]._id === Number(itemId))
+            if (cart[_i]._id === Number(_id))
             { 
                 setItem(cart[_i]);
                 setInCart(cart[_i].quantity); 
