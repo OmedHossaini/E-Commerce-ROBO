@@ -25,22 +25,39 @@ const getTotalPrice = () => {
 
     return totalPrice.toFixed(2);
 };
+
+// Calculate total quantity for each unique item in the cart based on item name
+const getTotalQuantityPerItem = () => {
+    const totalQuantityPerItem = {};
+
+    cart.forEach((item) => {
+        if (totalQuantityPerItem[item.name]) {
+            totalQuantityPerItem[item.name] += item.quantity;
+        } else {
+            totalQuantityPerItem[item.name] = item.quantity;
+        }
+    });
+
+    return totalQuantityPerItem;
+};
     
 return (
     <Wrapper>
     <h1>Shopping Cart</h1>
     <ItemsInCart>
     <ul>
-        {cart.map((cartItem,index) => (
-        <li key={cartItem._id}>
-            {cartItem.name} - {cartItem.price}
-            <RemoveCartButton onClick={() => removeFromCart(cartItem._id)}>Remove from Cart</RemoveCartButton>
-        </li>
-        ))}
-    </ul>
+                    {cart.map((cartItem, index) => (
+                        <li key={cartItem.name}>
+                            {cartItem.name} - {cartItem.price} - Quantity: {cartItem.quantity}
+                            <RemoveCartButton onClick={() => removeFromCart(cartItem._id)}>
+                                Remove from Cart
+                            </RemoveCartButton>
+                        </li>
+                    ))}
+                </ul>
     </ItemsInCart>
     <TotalPrice>
-                <p>Total Price: ${getTotalPrice()}</p>
+    <p>Total Price: ${getTotalPrice()}</p>
             </TotalPrice>
     <EndOfPageButtons>
     <Link to="/confirmation">
