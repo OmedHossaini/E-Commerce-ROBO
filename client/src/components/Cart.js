@@ -13,6 +13,18 @@ const Cart = () => {
 const handleClearCart = () => {
     clearCart();
 };
+// Calculate total price and quantity for each item in the cart
+const getTotalPrice = () => {
+    let totalPrice = 0;
+
+    cart.forEach((item) => {
+        // Remove the "$" sign from the price before converting to a number
+        const itemPrice = parseFloat(item.price.replace('$', ''));
+        totalPrice += itemPrice * item.quantity;
+    });
+
+    return totalPrice.toFixed(2);
+};
     
 return (
     <Wrapper>
@@ -27,6 +39,9 @@ return (
         ))}
     </ul>
     </ItemsInCart>
+    <TotalPrice>
+                <p>Total Price: ${getTotalPrice()}</p>
+            </TotalPrice>
     <EndOfPageButtons>
     <Link to="/confirmation">
         <button className='confirmationButton'>Proceed to Confirmation</button>
@@ -129,5 +144,8 @@ font-weight: bold;
         background-color: #d82c0d;
     }
 `
+const TotalPrice = styled.div`
+    margin-top: 10px;
+`;
 
 export default Cart;
