@@ -14,28 +14,63 @@ const AllProducts = () => {
     // State to store the list of companies
     const [companies, setCompanies] = useState([]);
     const {category,page} = useParams()
+    const [categories, setCategories] = useState([]);
 
     useEffect(()=>{
         emptyPage();
         requestItemCategoryPage({category:category,page:page});
-    },[page])
+    },[page,category])
 
     // Fetch companies data when the component mounts
-    useEffect(() => {
-
-
-
+    useEffect(() => { 
 
         fetch("/companies")
         .then(response => response.json())
         .then(data => setCompanies(data))
+        
+        fetch("/categories")
+        .then(response => response.json())
+        .then(data => setCategories(data))
     }, [])
 
+    const ThumbGrid = (itemsPerRow) =>{
+        let _index = 0;
+        const _maxIndex = itemsCurrentPage.length;
+        const _maxRows = _maxIndex/itemsPerRow; 
+        const elements = [];
+
+        for (let _i =0; _i< _maxRows;_i++)
+        {
+            const _gridItems = [];
+            for (let _j=0; _j < itemsPerRow;_j++)
+            {
+                if (_index >= _maxIndex)
+                {
+                    _i= 9999;
+                    _j= 9999;
+                    break;  
+                }
+                else
+                { 
+                    const _item = itemsCurrentPage[_index];
+                    const _gridItem = ( <ItemThumbnail key={_item._id} item={_item}/>)
+                    _gridItems.push(_gridItem);
+                    _index += 1;
+                }
+            }
+            const _gridRow = (<ItemsList>{_gridItems}</ItemsList>);
+            console.log("gridrow",_gridRow);
+            elements.push(_gridRow);
+        }
+        return elements;
+    }
 
 // Return the JSX for the AllProducts component
     return(
         
         <ItemsMainDiv>
+            
+        <Categories>
             <Tab>
                 <SmallTab>Search By Company!</SmallTab>
                 <LargeTab> 
@@ -47,10 +82,17 @@ const AllProducts = () => {
                     ))}
                 </ul>
                 </LargeTab>
-            </Tab>
-        <h1>OUR CATEGORIES</h1>
+            </Tab> 
+
+                {categories.map(category => (
+                    <Link className="categoryNames"key={category} to={`/items/${category}/${1}`}>
+                        {category}
+                    </Link>
+                ))}
+            </Categories>
+
         <div style={{flex:"1"}}></div>
-        <div style={{flex:"2"}}>
+        <div style={{flex:"40",margin:"20px 10px 10px 10px"}}>
 
         <CategoryTitle>{category}</CategoryTitle>  
         <CoolLink  {...(page === "1" ?{className: "hide"}:{}) } ><Link to={`/items/${category}/${page-1}`}>PREV</Link> </CoolLink>
@@ -62,18 +104,7 @@ const AllProducts = () => {
         )}
             {itemsCurrentPage != [] && ( 
                 <> 
-                   
-                    <ItemsList>
-                    {itemsCurrentPage.map((item,index)=>{ 
-                        
-                        if (index % 5 === 0)
-                        { 
-                        }
-                        return (
-                            <ItemThumbnail key={item._id} item={item} />
-                        );
-                    })}
-                    </ItemsList>
+                    {ThumbGrid(10)}
                     </>
                 )}
 
@@ -110,23 +141,21 @@ margin-right:20px;
 `
 
 const ItemsList = styled.div`
-position: relative;
-resize: none; 
-/* left:-120px; */ 
-width:800px;
+position: relative; 
+left:-30px;
+width:1200px;
+height:230px; 
 display: grid;
-grid-template-columns: repeat(auto-fill, minmax(150px, 150px));
+grid-template-columns: repeat(auto-fill, minmax(130px, 100px));
+gap:10px;
 margin-top: 30px; 
-min-height: 0;  
-min-width: 0; 
-max-height:500px; 
 `
 
 const Tab = styled.div`
 position: fixed;
-left: 0;
+top:180px;
+left: 150px;
 flex:1;
-top: 50%;
 transform: translateY(-50%);
 display: flex;
 flex-direction: column;
@@ -148,6 +177,38 @@ transition: width 0.3s ease-in-out;
         display: none;
     }
 `
+const Categories = styled.div` 
+margin:90px 50px 50px 50px;
+display: grid;
+grid-template-columns: repeat(2, 2fr);
+gap:10px; 
+height: 400px;
+min-width: 350px;
+
+.categoryNames{   
+display: -webkit-flex;
+display: flex;
+align-items: center;
+justify-content: center;
+text-align:center;  
+text-decoration: none;
+color: black;
+background-color: #8cd9c4;
+border-radius: 8px;
+font-size: 1.5em;
+width:150px;
+max-height: 50px;
+box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+padding:10px;
+
+    &:hover{
+        background-color: rgba(255, 250, 240);
+        font-weight: bold;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+} 
+`
+
 
 const LargeTab = styled.div`
 display: none;
