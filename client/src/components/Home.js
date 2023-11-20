@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 
 const Home = () => {
 
+
     const {
         actions: { requestItemPage, requestCart, emptyPage },
         state: { itemsCurrentPage, cart },
@@ -100,6 +101,7 @@ const Home = () => {
                         );
                     })}
                     </RecommendedSection> 
+                    
                 </>
                 )}
             </RightGrid>
@@ -158,8 +160,7 @@ padding: 5px;
         font-weight: bold;
         box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     }
-}
-
+} 
 `
 
 
@@ -197,7 +198,7 @@ h1{
 }
 `
 const HomePageImage = styled.img`
-    width: 80%;
+    width: 75%;
     height: auto;
     border-radius: 30px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);

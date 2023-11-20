@@ -45,7 +45,7 @@ const ItemThumbnail = (props) => {
             
             {/*checking if hovering to make the thumbnail bigger etc*/}
             {!bigHover && (
-                <ThumbTitle style={{minHeight: "54px"}}>{_item.name.substr(0,27)+"..."}</ThumbTitle>
+                <ThumbTitle style={{minHeight: "54px"}}>{_item.name.substr(0,25)+"..."}</ThumbTitle>
             )}
             {bigHover && (
                 <BigThumbTitle>{_item.name}</BigThumbTitle>
@@ -111,6 +111,7 @@ const BigThumbTitle = styled.div`
     min-height: 60px;
     font-size: 16px;
     margin-bottom: 10px;
+    word-wrap: break-word;
 `
 const ThumbLink = styled.a` 
     color:rgb(255, 120, 0);
