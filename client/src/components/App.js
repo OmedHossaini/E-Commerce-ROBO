@@ -8,6 +8,7 @@ import ItemDetail from './ItemDetail';
 import { MainContext } from './MainContext';
 import AboutUs from './AboutUsContent/AboutUs';
 import ContactUs from './ContactUs';
+import AllProducts from './AllProducts';
 
 
 const App = () => {
@@ -32,6 +33,7 @@ const App = () => {
           <Route path="/about" element={<AboutUs />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/contactus" element={<ContactUs />} /> 
+          <Route path="/allproducts" element={<AllProducts/>} />
           <Route path="/item/:itemId" element={<ItemDetail />} /> 
         </Routes>
       </Router>
