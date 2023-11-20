@@ -2,9 +2,10 @@ import React, { useState, useEffect, useContext } from 'react';
 import { MainContext } from './MainContext';
 import styled from 'styled-components';
 import ItemThumbnail from './ItemThumbnail';
-
+import { Link } from 'react-router-dom';
 
 const Home = () => {
+
 
     const {
         actions: { requestItemPage, requestCart },
@@ -12,9 +13,15 @@ const Home = () => {
         } = useContext(MainContext);
 
         const [recommendedArray, setRecommended] = useState([]);
+        const [categories, setCategories] = useState([]);
 
         ///Home needs item page for recommended as well as their cart quantity, 
         useEffect(() => { 
+            // Fetch categories
+            fetch("/categories")
+            .then(response => response.json())
+            .then(data => setCategories(data))
+
             requestItemPage(1);
             requestCart(); ///we do this here bc we don't want each individual thumbnail to make a full cart request
                             //it's necessary on any page that will contain thumbnails
@@ -33,10 +40,11 @@ const Home = () => {
                     {_randomTempArray.push(itemsCurrentPage[_i]);}  
                 } 
                 setRecommended(_randomTempArray); 
-             }
+            }
 
         }
             ,[itemsCurrentPage])
+
 
 
     return (
@@ -47,6 +55,13 @@ const Home = () => {
             </LeftGrid>
             <RightGrid>
             <h1>OUR CATEGORIES</h1> 
+            <Categories>
+                {categories.map(category => (
+                    <Link className="categoryNames"key={category} to={`/items/:category/:page`}>
+                        {category}
+                    </Link>
+                ))}
+            </Categories>
             {/*
             Renaud: commented this out, waiting on Ossama's categories endpoint
 
@@ -112,14 +127,41 @@ return (
 };
 
 
+
+const Categories = styled.div`
+display: grid;
+grid-template-columns: repeat(2, 2fr);
+gap:10px;
+margin-top: 10px;
+margin-bottom: 20px;
+
+.categoryNames{ 
+text-decoration: none;
+color: black;
+background-color: #8cd9c4;
+border-radius: 8px;
+font-size: 1.5em;
+box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+padding: 5px;
+
+    &:hover{
+        background-color: rgba(255, 250, 240);
+        font-weight: bold;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+}
+
+`
+
+
 //TODO Brian make this not ugly pls
 const RecommendedSection = styled.div`
 position: relative;
-left:-120px;
+/* left:-120px; */
 width:700px;
-height:240px; 
+height:230px; 
 display: grid;
-grid-template-columns: repeat(auto-fill, minmax(160px, 100px));
+grid-template-columns: repeat(auto-fill, minmax(130px, 100px));
 gap:10px;
 margin-top: 30px;
 
@@ -139,6 +181,7 @@ const RightGrid = styled.div`
 grid-area: 1 / 2 / 2 / 3;
 text-align: center;
 justify-self: center;
+margin-right: 20px;
 h1{
     font-weight: normal;
     border-bottom: 2px solid #ccc;

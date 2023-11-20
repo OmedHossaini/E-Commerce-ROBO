@@ -3,10 +3,10 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
 
-
-const AllProducts = ( { }) => {
+const AllProducts = () => {
     // State to store the list of companies
     const [companies, setCompanies] = useState([]);
+
 
     // Fetch companies data when the component mounts
     useEffect(() => {
@@ -14,6 +14,7 @@ const AllProducts = ( { }) => {
         .then(response => response.json())
         .then(data => setCompanies(data))
     }, [])
+
 
 // Return the JSX for the AllProducts component
     return(
