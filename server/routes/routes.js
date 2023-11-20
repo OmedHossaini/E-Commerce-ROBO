@@ -12,11 +12,15 @@ const categoryPage = require('./handlers/categoryPage')
 const categoryItem = require('./handlers/categoryItem')
 const itemsByCompanyName = require('./handlers/itemsByCompany')
 const getCategories = require('./handlers/categories');
+const itemSearch = require('./handlers/itemSearch')
 
 router.use(express.json());
 
 // Route to get items with company information from 'Data_Items' and 'Data_Companies' collections
 router.get('/items', itemsInfo);
+
+//Route to search items
+router.get('/itemSearch', itemSearch)
 
 // Route to get 20 items by page with company information from 'Data_Items' and 'Data_Companies' collections 
 router.get('/items/:page', itemsByPage);
