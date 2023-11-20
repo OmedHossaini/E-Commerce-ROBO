@@ -6,7 +6,6 @@ import { Link } from 'react-router-dom';
 
 const Home = () => {
 
-
     const {
         actions: { requestItemPage, requestCart, emptyPage },
         state: { itemsCurrentPage, cart },
