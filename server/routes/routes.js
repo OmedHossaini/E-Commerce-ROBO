@@ -10,6 +10,8 @@ const companyInfo = require("./handlers/companyInfo")
 const getItemById = require('./handlers/itemById')
 const categoryPage = require('./handlers/categoryPage')
 const categoryItem = require('./handlers/categoryItem')
+const itemsByCompanyName = require('./handlers/itemsByCompany')
+
 
 const getCategories = require('./handlers/categories');
 
@@ -21,14 +23,17 @@ router.get('/items', itemsInfo);
 // Route to get 20 items by page with company information from 'Data_Items' and 'Data_Companies' collections 
 router.get('/items/:page', itemsByPage);
 
+// Route to get 20 items by page with company information from 'Data_Items' and 'Data_Companies' collections 
+router.get('/item/:companyName', itemsByCompanyName);
+
 // Route to get 20 items by page by category from 'Data_Items' and 'Data_Companies' collections 
 router.get('/items/:category/:page', categoryPage);
 
 // Route for getting an item and its associated company information by ID
 router.get('/items/:_id', getItemById);
 
-// Route for getting an item and its associated company information by Category
-router.get('/items/:category', categoryItem);
+// Route for getting an item and its associated company information by Category WITH NO S BECAUSE IT WILL CONFUSE ITSELF WITH THE OTHER ROUTE
+router.get('/item/:category', categoryItem);
 
 // Route for getting the category
 router.get('/categories', getCategories);
