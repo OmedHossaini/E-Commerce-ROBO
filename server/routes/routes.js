@@ -12,7 +12,10 @@ const categoryPage = require('./handlers/categoryPage')
 const categoryItem = require('./handlers/categoryItem')
 const itemsByCompanyName = require('./handlers/itemsByCompany')
 const getCategories = require('./handlers/categories');
+
 const itemSearch = require('./handlers/itemSearch')
+const deleteAllItemsFromCart = require('./handlers/deleteAllItemsFromCart');
+
 
 router.use(express.json());
 
@@ -55,6 +58,7 @@ router.delete('/removeFromCart', deleteItemFromCart);
 // New POST route for purchasing an item
 router.post('/purchaseItem', purchaseItem);
 
-
+//New DELETE route to remove all items from the cart
+router.delete('/removeAllFromCart', deleteAllItemsFromCart);
 
 module.exports = router;
