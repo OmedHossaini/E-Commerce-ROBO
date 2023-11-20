@@ -163,6 +163,13 @@ font-weight: bold;
 `
 const TotalPrice = styled.div`
     margin-top: 10px;
+    font-weight: bold;
+    color: #d82c0d;
+    border: 2px solid transparent; 
+    border-image: linear-gradient(45deg, #008060, #d82c0d); 
+    border-image-slice: 1; 
+    padding: 10px; 
+    display: inline-block;
 `;
 
 export default Cart;
