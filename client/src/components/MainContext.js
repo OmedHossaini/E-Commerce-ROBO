@@ -4,7 +4,9 @@ const initialState = {
 
     cart: [], //what our cart currently contains, will be an array of item objects with extra property "quantity" for when multiples of the same item are in cart
     itemsCurrentPage: [], // a page request, always contains 20 different items. does not have the cart property "quantity"
-
+ 
+    itemsCompanyPage: [], //page request but will only find them by company
+    
     items: [], //probably to be avoided, but we can have all of the database's items in here
 
     companies: [], //placeholder, waiting for companies list endpoint, currently populated by requestAllItems
@@ -16,6 +18,7 @@ const initialState = {
   /*current usable actions:
           requestAllItems ==== PARAMS:(), updates `items` to an array of all item objects
 
+          emptyPage ==== PARAMS:(), just a thing to empty the items page
           requestItemPage ==== PARAMS:(PAGE) (PAGE must be int, the number of the page you want)  updates `itemsCurrentPage` to an array of 20 items at that page index 
                                 example: requestItemPage(2); (updates: itemsCurrentPage)
 
@@ -25,6 +28,7 @@ const initialState = {
 
           addToCart ==== PARAMS:(OBJECT) (OBJECT is one obj with two properties: {_id:(must be the item _id),_quantity:(quantity to set the amount in cart to) ) adds if necessary and sets the amount of items in cart
                               example: addToCart({_id:3333,quantity:2}); (updates: cart)
+          clearCart ==== PARAMS: () empties the cart array
 
           removeFromCart ==== PARAMS:(_id one number:(_id of object to remove from cart)), removes that object whatever the quantity completely from cart
                                 example: removeFromCart(3333); (updates: cart)
@@ -40,10 +44,12 @@ const reducer = (state, action) => {
     // move away from this for now.
     switch(action.type) {
     case 'receive-item-info-from-server': { 
+
       const _tempItemsIndex = {};
       const _tempItemsArray= []; 
       const _tempCategoriesArray = [];
       const _tempCompaniesArray = [];
+
       for (let _i = 0; _i < Object.keys(action.data).length; _i +=1)
       { 
         const _item = action.data[String(_i)]; 
@@ -105,7 +111,14 @@ const reducer = (state, action) => {
  
     }
 
+    case 'empty-page':{
+      const _tempPage = [];
+      return {
+        ...state,  
+        itemsCurrentPage: _tempPage,
+      } 
 
+    }
     case 'add-to-cart': { 
       const _tempCart = state.cart.slice();
       let _inCart = false;  
@@ -147,25 +160,30 @@ const reducer = (state, action) => {
 
     }
 
+    case 'clear-cart': { 
+      const _tempCart = [];
+
+      return {
+        ...state,  
+        cart: _tempCart,
+      } 
+
+    }
+
+
 
     
 
     //data required: category string
     //sets itemsByCategory to 
 
-    case 'get-items-by-category': {
-        const _cat = action.data;
-        const _tempItemCatArray = []; 
-        state.items.forEach(element => {
-            if (element.category === _cat)
-            {
-              _tempItemCatArray.push(element);
-            }
-        }); 
+    case 'get-items-by-category-page': {
+      console.log("PAGE",action.data); 
+        const _tempItemCatArray = action.data.slice();  
 
         return {
           ...state,
-          itemsByCategory:_tempItemCatArray,
+          itemsCurrentPage:_tempItemCatArray,
         };
     }
       
@@ -304,8 +322,49 @@ export const MainProvider = ({ children }) => {
         }) 
     }
 
+    const clearCart = (data) =>{
+      fetch(`/removeAllFromCart`,
+        {
+        method: "DELETE",
+        headers: {
+            "Content-Type":"application/json",
+            } 
+          }
+        )
+        .then(res => res.json())
+      
+        .then((res) => { 
+        dispatch({
+          type: "clear-cart",
+          data: res,
+          })
+        })
+    }
+
     const requestItemCategoryPage = (data) => {
-      //placeholder
+        fetch(`/items/${data.category}/${data.page}`,
+        {
+        method: "GET",
+        headers: {
+            "Content-Type":"application/json",
+            } 
+          }
+        )
+      .then(res => res.json())
+      
+      .then((res) => { 
+      dispatch({
+        type: "get-items-by-category-page",
+        data: res,
+        })
+      })
+    }
+
+    const emptyPage = (data) => {
+      dispatch({
+        type:"empty-page",
+        data:data,
+      })
     }
 
     const checkoutPurchase = (data) => {
@@ -331,8 +390,8 @@ export const MainProvider = ({ children }) => {
           requestAllItems,
           requestItemPage,
 
-          requestItemCategoryPage, //placeholder
-
+          requestItemCategoryPage,
+          emptyPage,
           requestCart,  
           addToCart, 
           removeFromCart,

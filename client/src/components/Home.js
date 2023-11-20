@@ -8,21 +8,27 @@ const Home = () => {
 
 
     const {
-        actions: { requestItemPage, requestCart },
+        actions: { requestItemPage, requestCart, emptyPage },
         state: { itemsCurrentPage, cart },
         } = useContext(MainContext);
+
+        const [loadPage,setLoadPage] = useState(false);
 
         const [recommendedArray, setRecommended] = useState([]);
         const [categories, setCategories] = useState([]);
 
         ///Home needs item page for recommended as well as their cart quantity, 
         useEffect(() => { 
+            //empty recommended to reload new ones
+            setRecommended([]);
+            setLoadPage(true);
             // Fetch categories
             fetch("/categories")
             .then(response => response.json())
             .then(data => setCategories(data))
-
-            requestItemPage(1);
+            
+            //
+            requestItemPage(Math.floor(Math.random()*10)+1);
             requestCart(); ///we do this here bc we don't want each individual thumbnail to make a full cart request
                             //it's necessary on any page that will contain thumbnails
         }, []);
@@ -31,13 +37,17 @@ const Home = () => {
         ////20 is the hardcoded amount per page
         useEffect(()=>{ 
 
-            if (itemsCurrentPage.length > 0)
+            if (itemsCurrentPage.length > 0 && loadPage)
             {  
                 const _randomTempArray = [];
+                let _rand = Math.floor(Math.random()*itemsCurrentPage.length)
                 for (let _i =0; _i < Math.min(itemsCurrentPage.length,5); _i++)
-                {   
-                    if (_randomTempArray.indexOf(itemsCurrentPage[_i]) === -1)
-                    {_randomTempArray.push(itemsCurrentPage[_i]);}  
+                {    
+                     if (_rand+_i >= itemsCurrentPage.length)
+                     {
+                        _rand = -_i;
+                     } 
+                    _randomTempArray.push(itemsCurrentPage[_rand+_i]);
                 } 
                 setRecommended(_randomTempArray); 
             }
@@ -57,7 +67,7 @@ const Home = () => {
             <h1>OUR CATEGORIES</h1> 
             <Categories>
                 {categories.map(category => (
-                    <Link className="categoryNames"key={category} to={`/items/:category/:page`}>
+                    <Link className="categoryNames"key={category} to={`/items/${category}/${1}`}>
                         {category}
                     </Link>
                 ))}
@@ -90,7 +100,7 @@ const Home = () => {
                             <ItemThumbnail key={item._id} item={item} />
                         );
                     })}
-                    </RecommendedSection>
+                    </RecommendedSection> 
                 </>
                 )}
             </RightGrid>
@@ -163,8 +173,7 @@ height:230px;
 display: grid;
 grid-template-columns: repeat(auto-fill, minmax(130px, 100px));
 gap:10px;
-margin-top: 30px;
-
+margin-top: 30px; 
 `
 
 const Wrapper = styled.div`
