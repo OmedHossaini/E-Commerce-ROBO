@@ -101,19 +101,24 @@ const ItemThumbnail = (props) => {
 }
 //cool CSS starts here
 const ThumbTitle = styled.p`
-margin:2px
+margin:2px;
+
+font-size: 16px;
 `
 const BigThumbTitle = styled.p`
-    min-height: 60px;
+    min-height: 40px;
+    font-size: 16px;
 `
 const ThumbLink = styled.a` 
     color:rgb(255, 120, 0);
     cursor:pointer;
+    font-size: 16px;
     &:hover{
     text-decoration: underline;}
 `
 const ThumbLinkDelete = styled.a` 
     color:rgb(255, 0, 0);
+    font-size: 16px;
     cursor:pointer;
     &:hover{text-decoration: underline;}
 `
@@ -122,20 +127,20 @@ position: relative;
 background-color: white;
 padding:8px;
 border-radius: 5px;
-width:150px;
-max-height:230px;
+width:120px;
+max-height:180px;
 left:0px;
 bottom:0px;
 box-shadow: rgba(0, 0, 0, 0.07) 0px 1px 2px, rgba(0, 0, 0, 0.07) 0px 2px 4px, rgba(0, 0, 0, 0.07) 0px 4px 8px, rgba(0, 0, 0, 0.07) 0px 8px 16px, rgba(0, 0, 0, 0.07) 0px 16px 32px, rgba(0, 0, 0, 0.07) 0px 32px 64px;
 transition: 100ms ease-in;
 &:hover{
     background-color: rgba(255, 250, 240);
-    font-size:18px;
+    font-size:16px;
     font-weight: 600;
     box-shadow: rgba(255, 120, 0, 0.07) 0px 1px 2px, rgba(255, 120, 0, 0.07) 0px 2px 4px, rgba(255, 120, 0, 0.07) 0px 4px 8px, rgba(255, 120, 0, 0.07) 0px 8px 16px, rgba(255, 120, 0, 0.07) 0px 16px 32px, rgba(255, 120, 0, 0.07) 0px 32px 64px;
-    left:-35px;
-    bottom:15px;
-    width: 220px;
+    left:-25px;
+    bottom:10px;
+    width: 160px;
     height: 100%;
     max-height:100%;
     z-index: 5;
@@ -143,8 +148,8 @@ transition: 100ms ease-in;
 `
 
 const ThumbImg = styled.img`
-width:146px;
-height:146px;
+width:80px;
+height:80px;
 border-radius: 5px;
 
 `
