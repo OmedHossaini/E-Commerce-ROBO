@@ -90,7 +90,7 @@ const SearchComponent = () => { // Main search component
         <StyledResultsContainer>
           {results.map((item, index) => (
             <Link 
-              to={`/item/${item._id}`} 
+              to={`/itemsId/${item._id}`} 
               key={index} 
               style={{ textDecoration: 'none' }}
               onClick={clearSearch} // Attach the clearSearch function to Link click
