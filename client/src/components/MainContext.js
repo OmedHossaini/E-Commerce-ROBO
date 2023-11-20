@@ -1,22 +1,45 @@
 import { createContext,useReducer } from "react";  
 
 const initialState = {  
-    itemsIndex: {},
-    companiesIndex: {},
-    items: [],
-    companies: [],
-    cart: [],
-    categories: [],
-    itemsCurrentPage: [],
-    cartChanged: false,
-    cartReceived: false,
+
+    cart: [], //what our cart currently contains, will be an array of item objects with extra property "quantity" for when multiples of the same item are in cart
+    itemsCurrentPage: [], // a page request, always contains 20 different items. does not have the cart property "quantity"
+
+    items: [], //probably to be avoided, but we can have all of the database's items in here
+
+    companies: [], //placeholder, waiting for companies list endpoint, currently populated by requestAllItems
+    categories: [], //placeholder, waiting for categories list endpoint, currently populated by requestAllItems
+ 
+    itemsIndex: {}, //probably deprecated
+    companiesIndex: {}, //probably deprecated
   };
+  /*current usable actions:
+          requestAllItems ==== PARAMS:(), updates `items` to an array of all item objects
+
+          requestItemPage ==== PARAMS:(PAGE) (PAGE must be int, the number of the page you want)  updates `itemsCurrentPage` to an array of 20 items at that page index 
+                                example: requestItemPage(2); (updates: itemsCurrentPage)
+
+          requestItemCategoryPage, //placeholder
+
+          requestCart ==== PARAMS:(), updates `cart` to an array of all item in carts. items here will have a `quantity` property of how many times the item is in cart
+
+          addToCart ==== PARAMS:(OBJECT) (OBJECT is one obj with two properties: {_id:(must be the item _id),_quantity:(quantity to set the amount in cart to) ) adds if necessary and sets the amount of items in cart
+                              example: addToCart({_id:3333,quantity:2}); (updates: cart)
+
+          removeFromCart ==== PARAMS:(_id one number:(_id of object to remove from cart)), removes that object whatever the quantity completely from cart
+                                example: removeFromCart(3333); (updates: cart)
+  
+          */          
+  
+
  
 const reducer = (state, action) => { 
      
+    //receive item info from server - currently does a little too much, receives ALL items from server and creates a bunch of
+    //useful arrays. unfortunately it's a bit much to ask all items from server on page load, so we should 
+    // move away from this for now.
     switch(action.type) {
-    case 'receive-item-info-from-server': {
-      console.log("receive actdata",action.data);
+    case 'receive-item-info-from-server': { 
       const _tempItemsIndex = {};
       const _tempItemsArray= []; 
       const _tempCategoriesArray = [];
@@ -49,6 +72,8 @@ const reducer = (state, action) => {
         
     }
  
+    //this is more what we want, setting itemsCurrentPage to 20 items (hardcoded in the endpoint, your fault Ossama)
+    //we should be using this whenever we want a list of items not from categories etc
     case 'receive-page-info-from-server': {
 
       const _tempItemsArray= []; 
@@ -63,6 +88,8 @@ const reducer = (state, action) => {
       } 
     }
 
+    //this sets your entire cart data, this is necessary to know what's in the cart
+    //do note the quantity property that only exists for items in the cart
     case 'receive-cart-info-from-server': {
       const _tempItemsArray= []; 
       for (let _i = 0; _i < Object.keys(action.data).length; _i +=1)
@@ -70,19 +97,30 @@ const reducer = (state, action) => {
          const _item = action.data[String(_i)]; 
         _tempItemsArray[_i] = {..._item};
       }
-      
-      console.log("cart items",_tempItemsArray);
+       
       return {
-        ...state, 
-        cartReceived: true,
+        ...state,  
         cart: _tempItemsArray,
       } 
  
     }
 
+
     case 'add-to-cart': { 
       const _tempCart = state.cart.slice();
-      _tempCart.push(action.data.item);
+      let _inCart = false;  
+      for (let _i = 0; _i < _tempCart.length;_i++)
+      {
+        if (_tempCart[_i]._id === action.data.item._id)
+        {
+          _tempCart[_i].quantity = action.data.item.quantity;
+          _inCart = true;
+        }
+      }
+      if (!_inCart)
+      {
+        _tempCart.push(action.data.item);
+      }
       return {
         ...state,  
         cart: _tempCart,
@@ -90,21 +128,40 @@ const reducer = (state, action) => {
 
     }
 
+    case 'remove-from-cart': { 
+      const _tempCart = state.cart.slice(); 
+      for (let _i = 0; _i < state.cart.length;_i++)
+      {
+        const _item = state.cart[_i];
+        if (_item._id  === action.data)
+        {
+          _tempCart.splice(_i, 1); 
+          break;
+        }
+      } 
+
+      return {
+        ...state,  
+        cart: _tempCart,
+      } 
+
+    }
+
+
+    
+
     //data required: category string
     //sets itemsByCategory to 
 
     case 'get-items-by-category': {
         const _cat = action.data;
-        const _tempItemCatArray = [];
-        console.log("actdata",action.data);
+        const _tempItemCatArray = []; 
         state.items.forEach(element => {
             if (element.category === _cat)
             {
               _tempItemCatArray.push(element);
             }
-        });
-
-        console.log("items by cat",_tempItemCatArray);
+        }); 
 
         return {
           ...state,
@@ -126,27 +183,29 @@ export const MainProvider = ({ children }) => {
 
     //requestItemPage must be used in use effect, it's the first half that will obtain the item page data
     //once done it will add it to the itemsCurrentPage state
+
     const requestItemPage = (data) => {
-            fetch('/items/'+String(data),
+            fetch('/items/'+String(data), //data contains only the _id, so we can directly string it
             {
-            method: "GET",
-            header: {
+            method: "GET", //method always important to set
+            headers: {  //make sure headers is headers, not just header.
                 "Content-Type":"application/json",
               } 
             }
           )
-          .then(res => res.json())
-          .then(data => receiveItemPageFromServer(data)) 
+          .then(res => res.json()) //turn them into json
+          .then(data => receiveItemPageFromServer(data)) //goes to the reducer so we can set the context proper 
           .catch((error)=>{
-            console.log(error); 
+            console.log(error); //log the errors.
           }) 
     }
+    //not copying this basic comment bc most functions are server fetches like this, will only add comments to the weirder ones
     
     const requestAllItems = () => {
         fetch('/items',
         {
         method: "GET",
-        header: {
+        headers: {
             "Content-Type":"application/json",
           } 
         }
@@ -162,7 +221,7 @@ export const MainProvider = ({ children }) => {
       fetch('/cart',
       {
       method: "GET",
-      header: {
+      headers: {
           "Content-Type":"application/json",
         } 
       }
@@ -203,15 +262,32 @@ export const MainProvider = ({ children }) => {
       });
 
     }
+ 
 
-    const cartUpdate = (data) => {
-      console.log("hi");
-    }
-
-    const addToCart = (data) => { 
+    const addToCart = (data) => {  
       fetch('/addToCart',
         {
         method: "POST", 
+        body: JSON.stringify({"_id":data._id,"quantity":data.quantity}), //body will NOT WORK if you type header: instead of headers: lol
+        headers: {
+            "Content-Type":"application/json",
+          },
+        })
+        .then(res => res.json())
+        .then((res) => {  
+          dispatch({
+        type: "add-to-cart",
+        data: res,
+        }) }  )
+      .catch((error)=>{
+        console.log(error);  
+        })
+    }; 
+
+    const removeFromCart = (data) => {
+      fetch('/removeFromCart',
+        {
+        method: "DELETE", 
         body: JSON.stringify({"_id":data}),
         headers: {
             "Content-Type":"application/json",
@@ -220,13 +296,17 @@ export const MainProvider = ({ children }) => {
         .then(res => res.json())
         .then((res) => { 
           dispatch({
-        type: "add-to-cart",
-        data: res,
+        type: "remove-from-cart",
+        data: data, //notice that sometimes data is data and sometimes it's res. really depends on what i want to pass to the reducer
         }) }  )  
       .catch((error)=>{
         console.log(error);  
-        })
-    }; 
+        }) 
+    }
+
+    const requestItemCategoryPage = (data) => {
+      //placeholder
+    }
 
     const checkoutPurchase = (data) => {
       dispatch({
@@ -234,6 +314,7 @@ export const MainProvider = ({ children }) => {
         data: data,
       }); 
     }; 
+
     //data required: category string
     const getItemsByCategory = (data) => {
       dispatch({
@@ -248,16 +329,15 @@ export const MainProvider = ({ children }) => {
         state,
         actions: { 
           requestAllItems,
-          requestItemPage, 
-          requestCart,
-          cartUpdate,
+          requestItemPage,
 
+          requestItemCategoryPage, //placeholder
 
+          requestCart,  
           addToCart, 
+          removeFromCart,
 
-          checkoutPurchase,
-
-          getItemsByCategory,
+          checkoutPurchase,  //placeholder
         },
       }}
     >

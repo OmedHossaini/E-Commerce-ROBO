@@ -1,14 +1,44 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { MainContext } from './MainContext';
 import styled from 'styled-components';
+import ItemThumbnail from './ItemThumbnail';
 
 
-const Home = ({ addToCart }) => {
+const Home = () => {
 
     const {
-        actions: { receiveItemInfoFromServer },
-        state: { items, itemsIndex },
+        actions: { requestItemPage, requestCart },
+        state: { itemsCurrentPage, cart },
         } = useContext(MainContext);
+
+        const [recommendedArray, setRecommended] = useState([]);
+
+        ///Home needs item page for recommended as well as their cart quantity, 
+        useEffect(() => { 
+            requestItemPage(1);
+            requestCart(); ///we do this here bc we don't want each individual thumbnail to make a full cart request
+                            //it's necessary on any page that will contain thumbnails
+        }, []);
+
+        ////Setting the recommended according to random items in the page received
+        ////20 is the hardcoded amount per page
+        useEffect(()=>{ 
+
+            if (itemsCurrentPage.length > 0)
+            {  
+                const _randomTempArray = [];
+                for (let _i =0; _i < Math.min(itemsCurrentPage.length,5); _i++)
+                {   
+                    if (_randomTempArray.indexOf(itemsCurrentPage[_i]) === -1)
+                    {_randomTempArray.push(itemsCurrentPage[_i]);}  
+                } 
+                setRecommended(_randomTempArray); 
+             }
+
+        }
+            ,[itemsCurrentPage])
+
+
     return (
         <>
         <Wrapper>
@@ -16,7 +46,10 @@ const Home = ({ addToCart }) => {
             <HomePageImage src='pexels-ovan-62689.jpg' alt="Home Page Image"/>
             </LeftGrid>
             <RightGrid>
-            <h1>OUR CATEGORIES</h1>
+            <h1>OUR CATEGORIES</h1> 
+            {/*
+            Renaud: commented this out, waiting on Ossama's categories endpoint
+
             {items != [] &&(
                 
                 items.map((item)=>{
@@ -29,12 +62,30 @@ const Home = ({ addToCart }) => {
                     )
                 })
                 )
-            }
+            }*/}
+
+            {/* once the current page is received, display recommended which is just a bunch of items from 1st page */}
+            {itemsCurrentPage != [] && (
+                <>
+                    <h1>RECOMMENDED</h1>
+                    <RecommendedSection>
+                    {recommendedArray.map((item)=>{
+
+                        return (
+                            <ItemThumbnail key={item._id} item={item} />
+                        );
+                    })}
+                    </RecommendedSection>
+                </>
+                )}
             </RightGrid>
         </Wrapper>
         </>
     )
 /*
+
+Renaud: Commented this out but if it can be recycled feel free. you should leave most fetches to me though.
+
 const [items, setItems] = useState([]);
 
 useEffect(() => {
@@ -60,6 +111,19 @@ return (
 */
 };
 
+
+//TODO Brian make this not ugly pls
+const RecommendedSection = styled.div`
+position: relative;
+left:-120px;
+width:700px;
+height:240px; 
+display: grid;
+grid-template-columns: repeat(auto-fill, minmax(160px, 100px));
+gap:10px;
+margin-top: 30px;
+
+`
 
 const Wrapper = styled.div`
 display: grid;
