@@ -29,6 +29,50 @@ const getTotalPrice = () => {
     return totalPrice.toFixed(2);
 };
 
+const handleConfirm = async (setConfirmed) => {
+    let _problem = false;
+    console.log("cart", cart);
+
+    try {
+        for (const element of cart) {
+            const response = await fetch('/itemsId/' + element._id, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+            const res = await response.json();
+
+            if (res.numInStock < element.quantity) {
+                _problem = true;
+                element.quantity = res.numInStock;
+            }
+        }
+
+        if (_problem) {
+            alert("Cart has an issue, numbers adjusted");
+            return null;
+        }
+
+        for (const element of cart) {
+            await fetch('/purchaseItem/', {
+                method: "POST",
+                body: JSON.stringify({
+                    itemId: element._id,
+                    quantity: element.quantity,
+                }),
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+        }
+
+        setConfirmed(true);
+    } catch (error) {
+        console.error("An error occurred:", error);
+    }
+}
+
 // Calculate total quantity for each unique item in the cart based on item name
 const getTotalQuantityPerItem = () => {
     const totalQuantityPerItem = {};
@@ -64,7 +108,7 @@ return (
             </TotalPrice>
     <EndOfPageButtons>
     <Link to="/confirmation">
-        <button className='confirmationButton'>Proceed to Confirmation</button>
+    <button className='confirmationButton' onClick={handleConfirm}>Proceed to Confirmation</button>
     </Link>
     <button className='ClearCartButton' onClick={handleClearCart}>Empty Cart</button>
     </EndOfPageButtons>
