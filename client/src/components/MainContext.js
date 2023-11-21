@@ -170,6 +170,14 @@ const reducer = (state, action) => {
 
     }
 
+    case 'get-items-by-company': { 
+
+      return {
+        ...state,  
+        itemsCurrentPage: action.data,
+      } 
+    }
+
 
 
     
@@ -177,8 +185,7 @@ const reducer = (state, action) => {
     //data required: category string
     //sets itemsByCategory to 
 
-    case 'get-items-by-category-page': {
-      console.log("PAGE",action.data); 
+    case 'get-items-by-category-page': { 
         const _tempItemCatArray = action.data.slice();  
 
         return {
@@ -360,6 +367,24 @@ export const MainProvider = ({ children }) => {
       })
     }
 
+      const requestItemsByCompany = (data) => {
+        fetch(`/company/${data.company}`,
+        {
+        method: "GET",
+        headers: {
+            "Content-Type":"application/json",
+            } 
+          }
+        )
+      .then(res => res.json()) 
+      .then((res) => {  
+      dispatch({
+        type: "get-items-by-company",
+        data: res,
+        })
+      })
+    }
+
     const emptyPage = (data) => {
       dispatch({
         type:"empty-page",
@@ -389,7 +414,7 @@ export const MainProvider = ({ children }) => {
         actions: { 
           requestAllItems,
           requestItemPage,
-
+          requestItemsByCompany,
           requestItemCategoryPage,
           emptyPage,
           requestCart,  

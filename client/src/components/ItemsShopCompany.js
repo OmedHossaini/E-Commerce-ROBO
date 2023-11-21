@@ -5,29 +5,39 @@ import { MainContext } from "./MainContext";
 
 import ItemThumbnail from "./ItemThumbnail"; 
 
-const AllProducts = () => {
+const ItemsShopCompany = () => {
+    
+    const {company} = useParams();
+
     const {
-        actions: { requestItemCategoryPage,emptyPage },
+        actions: { requestItemsByCompany ,emptyPage },
         state: {  itemsCurrentPage },
          } = useContext(MainContext);
 
     // State to store the list of companies
-    const [companies, setCompanies] = useState([]);
-    const {category,page} = useParams()
+    const [companies, setCompanies] = useState([]); 
     const [categories, setCategories] = useState([]);
+    const [companyObj, setCompanyObj] = useState({name:"",country:"",url:""});
 
     useEffect(()=>{
-        emptyPage();
-        requestItemCategoryPage({category:category,page:page});
-    },[page,category])
+        emptyPage(); 
+        requestItemsByCompany({company});
+    },[company])
 
     // Fetch companies data when the component mounts
     useEffect(() => { 
 
         fetch("/companies")
         .then(response => response.json())
-        .then(data => setCompanies(data))
-        
+        .then(data => {
+            setCompanies(data)
+            data.forEach(element => {
+                if (element.name === company)
+                {
+                    setCompanyObj(element);
+                } 
+            })
+        })
         fetch("/categories")
         .then(response => response.json())
         .then(data => setCategories(data))
@@ -58,7 +68,7 @@ const AllProducts = () => {
                     _index += 1;
                 }
             }
-            const _gridRow = (<ItemsList>{_gridItems}</ItemsList>);
+            const _gridRow = (<ItemsList key={"keyGrid"+String(_i)}>{_gridItems}</ItemsList>);
             console.log("gridrow",_gridRow);
             elements.push(_gridRow);
         }
@@ -94,21 +104,9 @@ const AllProducts = () => {
         <div style={{flex:"1"}}></div>
         <div style={{flex:"40",margin:"20px 10px 10px 10px"}}>
 
-        <CategoryTitle>{category}</CategoryTitle>  
-        <CoolLink  {...(page === "1" ?{className: "hide"}:{}) } ><Link to={`/items/${category}/${page-1}`}>PREV</Link> </CoolLink>
-        <PageSection>Page: {page} </PageSection>
-        {(itemsCurrentPage.length === 20) && (
-            <> 
-             <Link to={`/items/${category}/${String(Number(page)+1)}`}><CoolLink>NEXT</CoolLink></Link>
-            </>
-        )}
-            {itemsCurrentPage != [] && ( 
-                <> 
-                    {ThumbGrid(10)}
-                    </>
-                )}
-
-        
+             <CategoryTitle>{ company} </CategoryTitle> <CategorySubTitle>{companyObj.country} </CategorySubTitle>
+             {companyObj.url != "" && (<CategoryLink href={companyObj.url}>manufacturer website</CategoryLink>)}
+                    {ThumbGrid(10)}  
                 </div>
         </ItemsMainDiv> 
     )
@@ -131,13 +129,23 @@ const CoolLink = styled.span`
 const ItemsMainDiv = styled.div`
 display: flex;
 max-height: 100vh;
-`
-const PageSection = styled.span`
-font-size:22px;
-`
+` 
 const CategoryTitle = styled.span`
 font-size: 45px;
 margin-right:20px;
+`
+const CategorySubTitle = styled.span`
+font-size: 25px; 
+margin-right:20px;
+`
+const CategoryLink = styled.a`
+color:#008060;
+font-size: 20px; 
+margin-right:20px;
+margin-left:20px;
+&:hover{
+    text-decoration: underline;
+}
 `
 
 const ItemsList = styled.div`
@@ -254,4 +262,4 @@ ${Tab}:hover & {
 `;
 
 
-export default AllProducts
+export default ItemsShopCompany

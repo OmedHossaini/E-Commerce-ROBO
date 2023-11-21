@@ -9,6 +9,7 @@ import { MainContext } from './MainContext';
 import AboutUs from './AboutUsContent/AboutUs';
 import ContactUs from './ContactUs';
 import Items from './Items';
+import ItemsShopCompany from './ItemsShopCompany';
 import Confirmation from './Confirmation';
 
 const App = () => {
@@ -34,6 +35,7 @@ const App = () => {
           <Route path="/cart" element={<Cart />} />
           <Route path="/contactus" element={<ContactUs />} /> 
           <Route path="/items/:category/:page" element={<Items/>} />
+          <Route path="/itemsCompany/:company" element={<ItemsShopCompany/>} />
           <Route path="/itemsId/:_id" element={<ItemDetail />} /> 
           <Route path="/confirmation" element={<Confirmation />} />
         </Routes>
