@@ -11,14 +11,10 @@ const purchaseItem = async (req, res) => { // Define an async function to handle
     const client = new MongoClient(MONGO_URI, options); // Create a new MongoDB client instance.
     const itemId = req.body.itemId; // Extract the item ID from the request body.
     const quantity = req.body.quantity;  // Number of items the user wants to purchase // Extract the quantity of items to purchase.
-    const clientInfo = req.body.clientInfo; // Extract client information from the request.
 
     try {
         await client.connect(); // Connect to the MongoDB database.
         const db = client.db("E-Commerce");
-
-        // Insert client information into the "Data_Clients" collection
-        await db.collection("Data_Clients").insertOne(clientInfo);
 
         // Check current stock for the item
         const item = await db.collection("Data_Items").findOne({ _id: itemId });
