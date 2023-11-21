@@ -14,7 +14,8 @@ const AllProducts = () => {
     // State to store the list of companies
     const [companies, setCompanies] = useState([]);
     const {category,page} = useParams()
-    const [categories, setCategories] = useState([]);
+    const [categories, setCategories] = useState([]); 
+    const [windowWidth,setWindowWidth] = useState(window.innerWidth)
 
     useEffect(()=>{
         emptyPage();
@@ -22,8 +23,7 @@ const AllProducts = () => {
     },[page,category])
 
     // Fetch companies data when the component mounts
-    useEffect(() => { 
-
+    useEffect(() => {  
         fetch("/companies")
         .then(response => response.json())
         .then(data => setCompanies(data))
@@ -33,6 +33,16 @@ const AllProducts = () => {
         .then(data => setCategories(data))
     }, [])
 
+    ///update Width and its use effect to keep track of window width for the items display grid to be reactive
+    const updateWidth = () =>{
+        setWindowWidth(window.innerWidth);
+    }
+    useEffect(() => {
+        window.addEventListener("resize", updateWidth);
+        return () => window.removeEventListener("resize", updateWidth);
+    }, []);
+
+    //items display grid needs to be generated outside of the loop, partly bc i had issue with the css pushing itself out
     const ThumbGrid = (itemsPerRow) =>{
         let _index = 0;
         const _maxIndex = itemsCurrentPage.length;
@@ -53,7 +63,7 @@ const AllProducts = () => {
                 else
                 { 
                     const _item = itemsCurrentPage[_index];
-                    const _gridItem = ( <ItemThumbnail key={_item._id} item={_item}/>)
+                    const _gridItem = ( <ItemThumbnail onMouseOver={()=>{console.log(window.width)}} key={_item._id} item={_item}/>)
                     _gridItems.push(_gridItem);
                     _index += 1;
                 }
@@ -94,6 +104,7 @@ const AllProducts = () => {
         <div style={{flex:"1"}}></div>
         <div style={{flex:"40",margin:"20px 10px 10px 10px"}}>
 
+                    {/* Category name, hides the PREV and NEXT page if you can't scroll more */}
         <CategoryTitle>{category}</CategoryTitle>  
         <CoolLink  {...(page === "1" ?{className: "hide"}:{}) } ><Link to={`/items/${category}/${page-1}`}>PREV</Link> </CoolLink>
         <PageSection>Page: {page} </PageSection>
@@ -104,7 +115,8 @@ const AllProducts = () => {
         )}
             {itemsCurrentPage != [] && ( 
                 <> 
-                    {ThumbGrid(10)}
+                    {/* important thumbgrid reactive function */}
+                    {ThumbGrid(Math.min(10,Math.floor((windowWidth-300)/160)))}
                     </>
                 )}
 
@@ -143,7 +155,7 @@ margin-right:20px;
 const ItemsList = styled.div`
 position: relative; 
 left:-30px;
-width:1200px;
+min-width:fit-content;
 height:230px; 
 display: grid;
 grid-template-columns: repeat(auto-fill, minmax(130px, 100px));
@@ -153,23 +165,22 @@ margin-top: 30px;
 
 const Tab = styled.div`
 position: fixed;
-top:180px;
-left: 150px;
-flex:1;
-transform: translateY(-50%);
+bottom: 0;
+left: 0;
 display: flex;
 flex-direction: column;
 align-items: flex-start;
 `;
 
 
+
 const SmallTab = styled.div`
 background-color: #008060;
 color: #fff;
 padding: 10px;
-border-radius: 0 5px 5px 0;
 cursor: pointer;
 transition: width 0.3s ease-in-out;
+
 
 
     &:hover{

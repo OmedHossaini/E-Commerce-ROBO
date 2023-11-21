@@ -18,11 +18,22 @@ const ItemsShopCompany = () => {
     const [companies, setCompanies] = useState([]); 
     const [categories, setCategories] = useState([]);
     const [companyObj, setCompanyObj] = useState({name:"",country:"",url:""});
+    const [windowWidth,setWindowWidth] = useState(window.innerWidth);
 
+    //initial company import
     useEffect(()=>{
         emptyPage(); 
         requestItemsByCompany({company});
     },[company])
+
+     ///update Width and its use effect to keep track of window width for the items display grid to be reactive
+     const updateWidth = () =>{
+        setWindowWidth(window.innerWidth);
+    }
+    useEffect(() => {
+        window.addEventListener("resize", updateWidth);
+        return () => window.removeEventListener("resize", updateWidth);
+    }, []);
 
     // Fetch companies data when the component mounts
     useEffect(() => { 
@@ -106,7 +117,8 @@ const ItemsShopCompany = () => {
 
              <CategoryTitle>{ company} </CategoryTitle> <CategorySubTitle>{companyObj.country} </CategorySubTitle>
              {companyObj.url != "" && (<CategoryLink href={companyObj.url}>manufacturer website</CategoryLink>)}
-                    {ThumbGrid(10)}  
+                    {/* important thumbgrid reactive function */}
+                    {ThumbGrid(Math.min(10,Math.floor((windowWidth-300)/160)))}
                 </div>
         </ItemsMainDiv> 
     )
@@ -161,23 +173,20 @@ margin-top: 30px;
 
 const Tab = styled.div`
 position: fixed;
-top:180px;
-left: 150px;
-flex:1;
-transform: translateY(-50%);
+bottom: 0;
+left: 0;
 display: flex;
 flex-direction: column;
 align-items: flex-start;
 `;
 
-
 const SmallTab = styled.div`
 background-color: #008060;
 color: #fff;
 padding: 10px;
-border-radius: 0 5px 5px 0;
 cursor: pointer;
 transition: width 0.3s ease-in-out;
+
 
 
     &:hover{

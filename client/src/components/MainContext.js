@@ -111,6 +111,7 @@ const reducer = (state, action) => {
  
     }
 
+    
     case 'empty-page':{
       const _tempPage = [];
       return {
