@@ -163,7 +163,7 @@ margin-left:20px;
 const ItemsList = styled.div`
 position: relative; 
 left:-30px;
-width:1200px;
+min-width:fit-content;
 height:230px; 
 display: grid;
 grid-template-columns: repeat(auto-fill, minmax(130px, 100px));
