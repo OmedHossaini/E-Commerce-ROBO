@@ -1,4 +1,4 @@
-import {useContext, React} from 'react';
+import {useContext, React, useEffect} from 'react';
 import { MainContext } from './MainContext';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
@@ -13,6 +13,9 @@ const Cart = () => {
 const handleClearCart = () => {
     clearCart();
 };
+useEffect(
+    ()=>{requestCart();}
+    ,[])
 // Calculate total price and quantity for each item in the cart
 const getTotalPrice = () => {
     let totalPrice = 0;
@@ -57,7 +60,7 @@ return (
                 </ul>
     </ItemsInCart>
     <TotalPrice>
-    <p>Total Price: ${getTotalPrice()}</p>
+    <p>Order Total: ${getTotalPrice()}</p>
             </TotalPrice>
     <EndOfPageButtons>
     <Link to="/confirmation">

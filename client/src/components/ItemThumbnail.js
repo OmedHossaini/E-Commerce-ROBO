@@ -111,7 +111,8 @@ const BigThumbTitle = styled.div`
     min-height: 60px;
     font-size: 16px;
     margin-bottom: 10px;
-    word-wrap: break-word;
+    word-wrap: break-word; 
+    z-index: 6;
 `
 const ThumbLink = styled.a` 
     color:rgb(255, 120, 0);

@@ -83,7 +83,7 @@ return (
             <DetailsHeader>Product Details</DetailsHeader>
             <DetailsList>
             Crafted by{' '}
-            <StyledLink to={`/craftsman/${company._id}`}>
+            <StyledLink to={`/ItemsCompany/${company.name}`}>
                 {company.name}
             </StyledLink>
             </DetailsList>
